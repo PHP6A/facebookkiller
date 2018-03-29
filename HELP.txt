@@ -1,0 +1,17 @@
+Клонируем себе ветку, отличную от master git clone git@github.com:PHP6A/fbk.git -b "имя ветки"
+
+Создаём свою ветку
+git checkout -b my_branch
+
+Посмотреть все ветки
+git branch
+
+Пушим свою ветку на Гитхаб
+git push origin my_branch
+(теперь можно делать pull request — через веб-интерфейс Гитхаба)
+
+Синхронизируем локальную ветку с последней версией master на Гитхабе
+git checkout master # переключаемся на master
+git pull # вытягиваем с Гитхаба актуальную версию master
+git checkout my_branch # возвращаемя на свою ветку
+git merge master # синхронизируем свою ветку с актуальным master
