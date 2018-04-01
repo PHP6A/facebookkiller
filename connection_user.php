@@ -2,26 +2,12 @@
   <head>
        <title>Форма и progressive enhancement</title>
 	   	<meta charset="UTF-8">
-		
+
 	</head>
 <?php
-	//session_start(); 
 	abstract class Getter {
-	
-	/*public function __get($login)
-		{   
-			//echo"aaaaaa\n";
-			//$a=$this->$login;
-			//echo "$a";
-			//echo "$login";
-			//echo"bbbbbb\n";
-			return($this->$login);
-			
-		}
-	*/
 		public function __get($id)
-		{   
-			
+		{
 			return($this->$id);
 			
 		}
@@ -35,92 +21,71 @@
 		function __construct( ){
 			$this->db = mysqli_connect('localhost', 'stud', 'password', 'version1');
 		}
-		function connect(){
-		if (isset($_POST['login'])) { $this->login = $_POST['login']; if ($this->login == '') { unset($this->login);} } //заносим введенный пользователем логин в переменную $login, если он пустой, то уничтожаем переменную
-		if (isset($_POST['password'])) { $password=$_POST['password']; if ($password =='') { unset($password);} }
-		//заносим введенный пользователем пароль в переменную $password, если он пустой, то уничтожаем переменную
-		if (empty($this->login) or empty($password)) //если пользователь не ввел логин или пароль, то выдаем ошибку и останавливаем скрипт
-		{
-		exit ("Вы ввели не всю информацию, вернитесь назад и заполните все поля!");
+		
+		public function get_db(){  
+			return($this->db);
 		}
+		
+		function connect(){
+		
+		//заносим введенные пользователем данные в переменную, если он данные пустые, то уничтожаем переменную
+		if (isset($_POST['login'])) { $this->login = $_POST['login']; if ($this->login == '') { unset($this->login);} } 
+		if (isset($_POST['password'])) { $password=$_POST['password']; if ($password =='') { unset($password);} }
+		
+		//если пользователь не ввел логин или пароль, то выдаем ошибку и останавливаем скрипт
+		if (empty($this->login) or empty($password)) {
+			exit ("Вы ввели не всю информацию, вернитесь назад и заполните все поля!");
+		}
+		
 		//если логин и пароль введены, то обрабатываем их, чтобы теги и скрипты не работали, мало ли что люди могут ввести
 		$this->login = stripslashes($this->login);
 		$this->login = htmlspecialchars($this->login);
 		$password = stripslashes($password);
 		$password = htmlspecialchars($password);
+		
+		
 		//удаляем лишние пробелы
 		$this->login = trim($this->login);
 		$password = trim($password);
-		// подключаемся к базе
-
-
-		//$db = mysql_connect ("localhost","stud","password");
-		//mysql_select_db ("version1",$db);
 		
-		//$db = mysqli_connect('localhost', 'stud', 'password', 'site');
-
 		
-		//include ("bd.php");// файл bd.php должен быть в той же папке, что и все остальные, если это не так, то просто измените путь 
-		// проверка на существование пользователя с таким же логином
-		
-		//$result = mysqli_query($this->db,"SELECT id FROM user WHERE login='$login' and password='$password'");
-		//$myrow = mysqli_fetch_array($result);
-		$log=$this->login;
+		$log=$this->login;//что бы было удобнее работать со значением
 		$result = mysqli_query($this->db,"SELECT id FROM users WHERE login='$log' and password='$password' ");
 		$myrow = mysqli_fetch_array($result);
 		
 		
-		//print($myrow['id']);
-		//print_r($myrow);
-		//$myrow = mysqli_fetch_array($result);
-		//$r=$result->num_rows;
-		//echo"11111\n";
-		//echo
-		//$res = mysqli_query($db,"SELECT * FROM user where ".$myrow['id']."=id");
-		//$my = mysqli_fetch_array($res);
-		
-		
-		//print_r($my);
-		//printf("Select вернул %d строк.\n", mysqli_num_rows($result));
-		//echo"$res";
-		
-		//require_once('user.html');
-		
-		$a=$this->login;
-		echo "$a\n";
-		$this->id = $myrow['id'];
+				
+		//если мы нашли юзера с таким логином и паролем то сохраняеи в переменную ид
 		if (!empty($myrow['id'])) {
-			
-			//header(" Location: index.html ");
-			$r = $myrow['id'];
-			echo "$r  77777\n" ;
-			echo"111113333333333333";
-			//require_once('http://localhost:8888/version1/user.html');
-			//header ('Location:http://localhost:8888/version1/user.html');
-			
+			$this->id = $myrow['id'];
 		}
-		//if (!empty($myrow['id'])) {
-		//exit ("Извините, введённый вами логин уже зарегистрирован. Введите другой логин.");
-		//}
-	
+		
 		}
 		
 	}
-	$ob2 =  new Connection();
-	$ob2->connect();
+	$obj_class_Connection =  new Connection();
+	$obj_class_Connection->connect();
 ?>
 	<body>
+			<?php
+			$id_users = $obj_class_Connection->id;
+			$db_from_class = $obj_class_Connection->get_db();
+			$result = mysqli_query($db_from_class,"SELECT * FROM user WHERE id='$id_users'");
 			
-			<?php 
-				//$ob2 =  new Connection();
-				//$ob2->connect();
-				//$a = $ob2->login;
-				//echo "999  $a 88888\n";
-				$b = $ob2->id;
-				echo "/// $b ";
-			?>
-			<img src="1.jpg">
+			$row = mysqli_fetch_row($result);
+			//массив со значениями о пользователе ид имя фам и тд
+			print_r($row);
+			
+			//нужно для того что-бы вывести картинку в html
+			$img_adress = $row[3];
+				
 
+			?>
+			
+			<img src="./<?php echo"$img_adress"?> ">
+				
+		
+		
     </body>
 
 
