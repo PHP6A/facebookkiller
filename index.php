@@ -64,7 +64,7 @@
       			<input id="password" type="password" class="form-control" name="password" placeholder="Password">
     		</div>
     		<div class="box">
-    			<button id="register" type="button" class="btn btn-primary" name="register">Register</button>
+    			<button onclick="window.location='/registration.php';" type="button" class="btn btn-primary" name="register">Register</button>
     			<button id="login" type="button" class="btn btn-primary" name="submit">Login</button>
     		</div>
     		</div>
