@@ -6,68 +6,99 @@
 	</head>
 <?php
 	abstract class Getter {
-		public function __get($id)
-		{
+		public function __get($id){
 			return($this->$id);
-			
 		}
 	}
 	
 	
 	class Connection extends Getter{
-		private $db;
+		public $db;
 		public $login;
+		public $password;
 		public $id;
-		function __construct( ){
+		
+		function __construct( $login_in_constract, $password_in_constract ){
 			$this->db = mysqli_connect('localhost', 'stud', 'password', 'version1');
+			$this->login = $login_in_constract;
+			$this->password = $password_in_constract;
+			
+			$this->set_login( $this->login );
+			$this->set_password( $this->password );
+			
+		}
+				
+		public function set_login( $login ){
+			//если логин введен, то обрабатываем, чтобы теги и скрипты не работали, мало ли что люди могут ввести
+			$this->login = stripslashes($login);
+			$this->login = htmlspecialchars($this->login);
+			
+			//удаляем лишние пробелы
+			$this->login = trim($this->login);
 		}
 		
+		public function set_password( $password ){
+			//если логин введен, то обрабатываем, чтобы теги и скрипты не работали, мало ли что люди могут ввести
+			$this->password = stripslashes($password);
+			$this->password = htmlspecialchars($this->password);
+			
+			//удаляем лишние пробелы
+			$this->password = trim($this->password);
+		}
+		public function set_id( $id_from_class ){
+			$this->id =  $id_from_class;
+		}
 		public function get_db(){  
 			return($this->db);
+		}
+				
+		public function get_login( ){
+			return ($this->login);
+		}
+		
+		
+		public function get_password( ){
+			return ($this->password);
 		}
 		
 		function connect(){
 		
-		//заносим введенные пользователем данные в переменную, если он данные пустые, то уничтожаем переменную
-		if (isset($_POST['login'])) { $this->login = $_POST['login']; if ($this->login == '') { unset($this->login);} } 
-		if (isset($_POST['password'])) { $password=$_POST['password']; if ($password =='') { unset($password);} }
+		//что бы было удобнее работать со значением
+		$log=$this->login;
+		$pas=$this->password;
 		
-		//если пользователь не ввел логин или пароль, то выдаем ошибку и останавливаем скрипт
-		if (empty($this->login) or empty($password)) {
-			exit ("Вы ввели не всю информацию, вернитесь назад и заполните все поля!");
-		}
+		//echo"$log 111\n";
+		//echo"$pas 333\n";
 		
-		//если логин и пароль введены, то обрабатываем их, чтобы теги и скрипты не работали, мало ли что люди могут ввести
-		$this->login = stripslashes($this->login);
-		$this->login = htmlspecialchars($this->login);
-		$password = stripslashes($password);
-		$password = htmlspecialchars($password);
-		
-		
-		//удаляем лишние пробелы
-		$this->login = trim($this->login);
-		$password = trim($password);
-		
-		
-		$log=$this->login;//что бы было удобнее работать со значением
-		$result = mysqli_query($this->db,"SELECT id FROM users WHERE login='$log' and password='$password' ");
+		$result = mysqli_query($this->db,"SELECT id FROM users WHERE login='$log' and password='$pas' ");
 		$myrow = mysqli_fetch_array($result);
 		
-		
-				
 		//если мы нашли юзера с таким логином и паролем то сохраняеи в переменную ид
 		if (!empty($myrow['id'])) {
-			$this->id = $myrow['id'];
+			
+			$this->set_id( $myrow['id'] );
+			//$this->id = $myrow['id'];
 		}
 		
 		}
 		
 	}
-	$obj_class_Connection =  new Connection();
-	$obj_class_Connection->connect();
+		
+		//if (isset($_POST['login']) && isset($_POST['password'] )) { 
+		//	$obj_class_Connection =  new Connection( $_POST['login'],  $_POST['password'] );
+		//}
+		
+		//$obj_class_Connection->connect();
 ?>
 	<body>
-			<?php
+		<?php
+		if (isset($_POST['login']) && isset($_POST['password'] )) { 
+			$obj_class_Connection =  new Connection( $_POST['login'],  $_POST['password'] );
+		}
+		
+		$obj_class_Connection->connect();
+		
+		
 			$id_users = $obj_class_Connection->id;
 			$db_from_class = $obj_class_Connection->get_db();
 			$result = mysqli_query($db_from_class,"SELECT * FROM user WHERE id='$id_users'");
