@@ -19,7 +19,7 @@
 		public $id;
 		
 		function __construct( $login_in_constract, $password_in_constract ){
-			$this->db = mysqli_connect('localhost', 'stud', 'password', 'version1');
+			$this->db = mysqli_connect('localhost', 'stud', 'password', 'Users');
 			$this->login = $login_in_constract;
 			$this->password = $password_in_constract;
 			
@@ -70,12 +70,16 @@
 		//echo"$log 111\n";
 		//echo"$pas 333\n";
 		
-		$result = mysqli_query($this->db,"SELECT id FROM users WHERE login='$log' and password='$pas' ");
+		$result = mysqli_query($this->db,"SELECT id FROM logpas WHERE login='$log' and password='$pas' ");
 		$myrow = mysqli_fetch_array($result);
 		
+		
+		//print_r($myrow);
 		//если мы нашли юзера с таким логином и паролем то сохраняеи в переменную ид
 		if (!empty($myrow['id'])) {
-			
+			//echo"1111111111111111111\n";
+			//print($myrow['id']);
+			//echo"2222222222222222222\n";
 			$this->set_id( $myrow['id'] );
 			//$this->id = $myrow['id'];
 		}
@@ -101,14 +105,20 @@
 		
 			$id_users = $obj_class_Connection->id;
 			$db_from_class = $obj_class_Connection->get_db();
-			$result = mysqli_query($db_from_class,"SELECT * FROM user WHERE id='$id_users'");
-			
+			$result = mysqli_query($db_from_class,"SELECT * FROM registration WHERE id='$id_users'");
+			//echo "$db_from_class";
 			$row = mysqli_fetch_row($result);
+			//echo"$id_users";
+			
 			//массив со значениями о пользователе ид имя фам и тд
+			
+			
+			
 			print_r($row);
 			
 			//нужно для того что-бы вывести картинку в html
-			$img_adress = $row[3];
+			
+			//$img_adress = $row[3];
 				
 
 			?>
